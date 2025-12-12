@@ -1,0 +1,346 @@
+{
+    "protocol": {
+        "prefix": ":",
+        "suffix": "\r\n",
+        "timeout": 0,
+        "source_address": 0,
+        "transmission_mode": "ascii",
+        "checksum_calculation": "LRC",
+        "prototype": 
+        [
+            {
+                "name": "fc01",
+                "desc": "function code 1",
+                "transmit" : [
+                    {
+                        "name": "slave_address",
+                        "desc": "slave address",
+                        "bits": 8
+                    },
+                    {
+                        "name": "function",
+                        "desc": "function number",
+                        "bits": 8
+                    },
+                    {
+                        "name": "starting_address",
+                        "desc": "starting address",
+                        "bits": 16
+                    },
+                    {
+                        "name": "length",
+                        "desc": "quantity of registers",
+                        "bits": 16
+                    },
+                    {
+                        "name": "error_check",
+                        "desc": "LRC",
+                        "bits": 8
+                    }
+                ],
+                "receive" : [
+                    {
+                        "name": "slave_address",
+                        "desc": "slave address",
+                        "bits": 8
+                    },
+                    {
+                        "name": "function",
+                        "desc": "function number",
+                        "bits": 8
+                    },
+                    {
+                        "name": "byte_count",
+                        "desc": "byte count",
+                        "bits": 8
+                    },
+                    {
+                        "name": "data_bytes",
+                        "desc": "data bytes",
+                        "bits": 8
+                    },
+                    {
+                        "name": "error_check",
+                        "desc": "LRC",
+                        "bits": 8
+                    }
+                ]
+            },
+            {
+                "name": "fc02",
+                "desc": "function code 2",
+                "transmit" : [
+                    {
+                        "name": "slave_address",
+                        "desc": "slave address",
+                        "bits": 8
+                    },
+                    {
+                        "name": "function",
+                        "desc": "function number",
+                        "bits": 8
+                    },
+                    {
+                        "name": "starting_address",
+                        "desc": "starting address",
+                        "bits": 16
+                    },
+                    {
+                        "name": "length",
+                        "desc": "quantity of registers",
+                        "bits": 16
+                    },
+                    {
+                        "name": "error_check",
+                        "desc": "LRC",
+                        "bits": 8
+                    }
+                ],
+                "receive" : [
+                    {
+                        "name": "slave_address",
+                        "desc": "slave address",
+                        "bits": 8
+                    },
+                    {
+                        "name": "function",
+                        "desc": "function number",
+                        "bits": 8
+                    },
+                    {
+                        "name": "byte_count",
+                        "desc": "byte count",
+                        "bits": 8
+                    },
+                    {
+                        "name": "data_bytes",
+                        "desc": "data bytes",
+                        "bits": 8
+                    },
+                    {
+                        "name": "error_check",
+                        "desc": "LRC",
+                        "bits": 8
+                    }
+                ]
+            },
+            {
+                "name": "fc03",
+                "desc": "function code 3",
+                "transmit" : [
+                    {
+                        "name": "slave_address",
+                        "desc": "slave address",
+                        "bits": 8
+                    },
+                    {
+                        "name": "function",
+                        "desc": "function number",
+                        "bits": 8
+                    },
+                    {
+                        "name": "starting_address",
+                        "desc": "starting address",
+                        "bits": 16
+                    },
+                    {
+                        "name": "length",
+                        "desc": "quantity of registers",
+                        "bits": 16
+                    },
+                    {
+                        "name": "error_check",
+                        "desc": "LRC",
+                        "bits": 8
+                    }
+                ],
+                "receive" : [
+                    {
+                        "name": "slave_address",
+                        "desc": "slave address",
+                        "bits": 8
+                    },
+                    {
+                        "name": "function",
+                        "desc": "function number",
+                        "bits": 8
+                    },
+                    {
+                        "name": "byte_count",
+                        "desc": "byte count",
+                        "bits": 8
+                    },
+                    {
+                        "name": "data_bytes",
+                        "desc": "data bytes",
+                        "bits": 8
+                    },
+                    {
+                        "name": "error_check",
+                        "desc": "LRC",
+                        "bits": 8
+                    }
+                ]
+            },
+            {
+                "name": "fc04",
+                "desc": "function code 4",
+                "transmit" : [
+                    {
+                        "name": "slave_address",
+                        "desc": "slave address",
+                        "bits": 8
+                    },
+                    {
+                        "name": "function",
+                        "desc": "function number",
+                        "bits": 8
+                    },
+                    {
+                        "name": "starting_address",
+                        "desc": "starting address",
+                        "bits": 16
+                    },
+                    {
+                        "name": "length",
+                        "desc": "quantity of registers",
+                        "bits": 16
+                    },
+                    {
+                        "name": "error_check",
+                        "desc": "LRC",
+                        "bits": 8
+                    }
+                ],
+                "receive" : [
+                    {
+                        "name": "slave_address",
+                        "desc": "slave address",
+                        "bits": 8
+                    },
+                    {
+                        "name": "function",
+                        "desc": "function number",
+                        "bits": 8
+                    },
+                    {
+                        "name": "byte_count",
+                        "desc": "byte count",
+                        "bits": 8
+                    },
+                    {
+                        "name": "data_bytes",
+                        "desc": "data bytes",
+                        "bits": 8
+                    },
+                    {
+                        "name": "error_check",
+                        "desc": "LRC",
+                        "bits": 8
+                    }
+                ]
+            }
+        ],
+        "device": 
+        [
+            {
+                "name": "dev1",
+                "address": 1,
+                "message": 
+                [
+                    {
+                        "name": "fc01",
+                        "function": 1,
+                        "starting_address": 32,
+                        "length": 12,
+                        "data_type": "bit"
+                    },
+                    {
+                        "name": "fc02",
+                        "function": 2,
+                        "starting_address": 500,
+                        "length": 32,
+                        "data_type": "bit"
+                    },
+                    {
+                        "name": "fc03",
+                        "function": 3,
+                        "starting_address": 600,
+                        "length": 2,
+                        "data_type": "int16"
+                    },
+                    {
+                        "name": "fc03",
+                        "function": 3,
+                        "starting_address": 107,
+                        "length": 3,
+                        "data_type": "int16"
+                    },
+                    {
+                        "name": "fc04",
+                        "function": 4,
+                        "starting_address": 600,
+                        "length": 16,
+                        "data_type": "int16"
+                    },
+                    {
+                        "name": "fc04",
+                        "function": 4,
+                        "starting_address": 200,
+                        "length": 2,
+                        "data_type": "int16"
+                    }
+                ]
+            },
+            {
+                "name": "dev2",
+                "address": 2,
+                "message": 
+                [
+                    {
+                        "name": "fc01",
+                        "function": 1,
+                        "starting_address": 32,
+                        "length": 12,
+                        "data_type": "bit"
+                    },
+                    {
+                        "name": "fc02",
+                        "function": 2,
+                        "starting_address": 500,
+                        "length": 16,
+                        "data_type": "bit"
+                    },
+                    {
+                        "name": "fc03",
+                        "function": 3,
+                        "starting_address": 600,
+                        "length": 2,
+                        "data_type": "int16"
+                    },
+                    {
+                        "name": "fc03",
+                        "function": 3,
+                        "starting_address": 107,
+                        "length": 3,
+                        "data_type": "int16"
+                    },
+                    {
+                        "name": "fc04",
+                        "function": 4,
+                        "starting_address": 600,
+                        "length": 16,
+                        "data_type": "int16"
+                    },
+                    {
+                        "name": "fc04",
+                        "function": 4,
+                        "starting_address": 200,
+                        "length": 2,
+                        "data_type": "int16"
+                    }
+                ]
+            }
+        ]
+    }
+}
