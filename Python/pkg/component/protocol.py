@@ -175,43 +175,6 @@ class Protocol:
         # Conversion
         return self.conversion.GetConvertedMessage(msg, self.prefix, self.suffix)
     
-    def getValueArrayWithBits(self, segment: Segment, message: Message, device: Device, msg: bytearray):
-        """
-        Retrieves the value array and bit size for a given segment.
-
-        Args:
-            segment (Segment): The segment object.
-            message (Message): The message object.
-            device (Device): The device object.
-            msg (bytearray): The message bytearray.
-        Returns:
-            list[int], int: The array of values, and the number of bits.
-        Raises:
-            None
-        """
-        array = list[int]()
-        if segment.name == "slave_address":
-            array.append(device.address)
-            return array, segment.bits
-        if segment.name == "error_check":
-            array.append(self.checksum.CalculateChecksum(msg, self.prefix))
-            return array, segment.bits
-        if segment.name == "byte_count":            
-            array.append(int(message.getDataByteCount()))
-            return array, segment.bits
-        if segment.name == "data_bytes":            
-            b = segment.bits * int(message.getDataByteCount())
-            while b > 0:
-                rand = random.randint(0, 255)
-                array.append(rand)
-                b -= 8
-            return array, segment.bits
-        # Get value from message based on segment name
-        if hasattr(message, segment.name):
-            array.append(getattr(message, segment.name))
-            return array, segment.bits
-        return None, 0
-    
     # Simulated transaction method
     def transact(self, message: Message, device: Device):
         """
@@ -259,7 +222,6 @@ class Protocol:
                 return prototype
         return None
     
-    # Append methods
     def appendStrToByteArray(self, msg: bytearray, addition: str):
         """
         Appends a string to the message bytearray.
@@ -275,8 +237,7 @@ class Protocol:
         if len(addition) > 0:
             for char in addition:
                 msg.append(ord(char.upper()))
-        return msg
-        
+        return msg        
     
     def appendSegmentsToByteArray(self, msg: bytearray, segments: list[Segment], message: Message, device: Device):
         """
@@ -313,4 +274,40 @@ class Protocol:
                 raise ValueError(f'Protocol: unable to find value for segment: {segment.name}')
         return msg
 
+    def getValueArrayWithBits(self, segment: Segment, message: Message, device: Device, msg: bytearray):
+        """
+        Retrieves the value array and bit size for a given segment.
+
+        Args:
+            segment (Segment): The segment object.
+            message (Message): The message object.
+            device (Device): The device object.
+            msg (bytearray): The message bytearray.
+        Returns:
+            list[int], int: The array of values, and the number of bits.
+        Raises:
+            None
+        """
+        array = list[int]()
+        if segment.name == "slave_address":
+            array.append(device.address)
+            return array, segment.bits
+        if segment.name == "error_check":
+            array.append(self.checksum.CalculateChecksum(msg, self.prefix))
+            return array, segment.bits
+        if segment.name == "byte_count":            
+            array.append(int(message.getDataByteCount()))
+            return array, segment.bits
+        if segment.name == "data_bytes":            
+            b = segment.bits * int(message.getDataByteCount())
+            while b > 0:
+                rand = random.randint(0, 255)
+                array.append(rand)
+                b -= 8
+            return array, segment.bits
+        # Get value from message based on segment name
+        if hasattr(message, segment.name):
+            array.append(getattr(message, segment.name))
+            return array, segment.bits
+        return None, 0
     
