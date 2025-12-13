@@ -39,7 +39,7 @@ git clone https://github.com/yourusername/DONP.git
 Then
 CD into the project directory:
 ```bash
-cd DONP
+cd donp
 ```
 
 
@@ -56,7 +56,7 @@ To remove all docker containers running the DONP simulation, execute:
 ```bash
 ./dockerRemove.sh
 ```
-
+Note: The Docker image will remain on your system after removing the docker containers.
 
 ### Active Protocol
 By default, the Modbus RTU protocol is active.

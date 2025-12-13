@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # A script to run the Descriptive Object Notated Protocol (DONP) simulation.
 # Usage: ./donp.sh

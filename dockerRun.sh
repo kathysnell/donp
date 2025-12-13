@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # A script to run the docker image that will run the 
 # Descriptive Object Notated Protocol (DONP) simulation.

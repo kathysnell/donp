@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # A script to remove all docker containters running the
 # Descriptive Object Notated Protocol (DONP) simulation.
