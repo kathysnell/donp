@@ -23,24 +23,27 @@ class Prototype:
         self.rx = []
         # Ensure all required fields are present
         if 'name' in protocol:
-            if 'transmit' in protocol:
-                if 'receive' in protocol:
-                    # Initialize optional prototype fields       
-                    desc = ""
-                    # Populate prototype fields if they exist
-                    if 'name' in protocol:
-                        name = protocol['name']
-                    if 'desc' in protocol:
-                        desc = protocol['desc']
-                    self.__initialize(name, desc, protocol['transmit'], protocol['receive'])
-                else:
-                    raise AttributeError("Prototype: receive field is required")
-            else:
-                raise AttributeError("Prototype: transmit field is required")
+            pass
         else:
             raise AttributeError("Prototype: name field is required")
+        if 'transmit' in protocol:
+            pass
+        else:
+            raise AttributeError("Prototype: transmit field is required")
+        if 'receive' in protocol:
+            pass
+        else:
+            raise AttributeError("Prototype: receive field is required")
+        # Initialize optional prototype fields       
+        desc = ""
+        # Populate prototype fields if they exist
+        if 'name' in protocol:
+            name = protocol['name']
+        if 'desc' in protocol:
+            desc = protocol['desc']
+        self.__initialize(name, desc, protocol['transmit'], protocol['receive'])
     
-
+    
     def __initialize(self, name: str, desc: str, transmit: json, receive: json):
         self.name = name
         self.desc = desc
@@ -62,7 +65,7 @@ class Prototype:
         Raises:
             None
         """
-        self.logger.debug(f"Prototype: " + self.name + " (" + self.desc + ")")
+        self.logger.debug("Prototype: %s (%s)", self.name, self.desc)
 
     def get_segments(self, direction: Direction):
         """

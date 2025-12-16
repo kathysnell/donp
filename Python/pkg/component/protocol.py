@@ -37,40 +37,31 @@ class Protocol:
         file = None
         # Ensure all required fields are present
         if 'protocol' in protocol:
-            try:        
-                file = protocol['protocol']
-            except Exception as e:
-                self.logger.error("an exception has occurred: %s", e)
-            if 'prototype' in file:
-                if 'device' in file:
-                    # Initialize optional protocol fields
-                    prefix = ""
-                    suffix = ""
-                    timeout = 0
-                    source_address = 0
-                    transmission_mode = "hex"
-                    checksum_calculation = "CRC16"
-                    # Populate protocol fields if they exist
-                    if 'prefix' in file:
-                        prefix = file['prefix']
-                    if 'suffix' in file:
-                        suffix = file['suffix']
-                    if 'timeout' in file:
-                        timeout = file['timeout']
-                    if 'source_address' in file:
-                        source_address = file['source_address']
-                    if 'transmission_mode' in file:
-                        transmission_mode = file['transmission_mode']
-                    if 'checksum_calculation' in file:
-                        checksum_calculation = file['checksum_calculation']
-                    # Initialize protocol
-                    self.__initialize(prefix, suffix, timeout, source_address, transmission_mode, checksum_calculation)
-                    self.__init_prototypes(file)
-                    self.__init_devices(file)
-                else:
-                    raise AttributeError("Protocol: device object is required")
-            else:
-                raise AttributeError("Protocol: prototype object is required")
+            file = protocol['protocol']
+            # Initialize optional protocol fields
+            prefix = ""
+            suffix = ""
+            timeout = 0
+            source_address = 0
+            transmission_mode = "hex"
+            checksum_calculation = "CRC16"
+            # Populate protocol fields if they exist
+            if 'prefix' in file:
+                prefix = file['prefix']
+            if 'suffix' in file:
+                suffix = file['suffix']
+            if 'timeout' in file:
+                timeout = file['timeout']
+            if 'source_address' in file:
+                source_address = file['source_address']
+            if 'transmission_mode' in file:
+                transmission_mode = file['transmission_mode']
+            if 'checksum_calculation' in file:
+                checksum_calculation = file['checksum_calculation']
+            # Initialize protocol
+            self.__initialize(prefix, suffix, timeout, source_address, transmission_mode, checksum_calculation)
+            self.__init_prototypes(file)
+            self.__init_devices(file)
         else:
             raise AttributeError("Protocol: protocol object is required")
 
@@ -86,16 +77,24 @@ class Protocol:
         random.seed(time.time())
 
     def __init_prototypes(self, file: json):
-        self.prototype = []
-        self.logger.debug(f"Initializing Prototype: {file["prototype"]}")
-        for prototype in file['prototype']:
-            self.prototype.append(Prototype(prototype, self.logger))
+        if 'prototype' in file:
+            self.prototype = []
+            self.logger.debug(f"Initializing Prototype: {file["prototype"]}")
+            for prototype in file['prototype']:
+                self.prototype.append(Prototype(prototype, self.logger))
+        else:
+            raise AttributeError("Protocol: prototype object is required")
+    
 
     def __init_devices(self, file: json):
-        self.device = []
-        self.logger.debug(f"Initializing Device: {file["device"]}")
-        for device in file['device']:
-            self.device.append(Device(device, self.logger))
+        if 'device' in file:
+            self.device = []
+            self.logger.debug(f"Initializing Device: {file["device"]}")
+            for device in file['device']:
+                self.device.append(Device(device, self.logger))
+        else:
+            raise AttributeError("Protocol: device object is required")
+    
 
     def log(self):
         """

@@ -124,7 +124,6 @@ class Conversion:
         Raises:
             None
         """
-        disp = msg
         if self.mode == Mode.ASCII.value:
             disp = msg.decode('utf-8')
         else:
