@@ -25,7 +25,7 @@ func NewSimulation(conversion transform.Conversion) *Simulation {
 }
 
 // SimulateTransaction simulates a transmit and receive transaction.
-func (s *Simulation) SimulateTransaction(tx []byte, rx []byte) bool {
+func (s *Simulation) SimulateTransaction(tx, rx []byte) bool {
 	if s.simulateTransmit(tx) {
 		if s.simulateReceive(rx) {
 			return true

@@ -95,18 +95,30 @@ func NewProtocol(dataMap map[string]interface{}) *Protocol {
 	}
 	if transmissionMode, ok := protocolMap["transmission_mode"].(string); ok {
 		protocol.TransmissionMode = transmissionMode
-	} else {
-		protocol.TransmissionMode = "hex"
 	}
 	if checksumCalculation, ok := protocolMap["checksum_calculation"].(string); ok {
 		protocol.ChecksumCalculation = checksumCalculation
-	} else {
-		protocol.ChecksumCalculation = "CRC16"
 	}
 	protocol.Conversion = transform.NewConversion(protocol.TransmissionMode)
 	protocol.Checksum = element.NewChecksum(protocol.ChecksumCalculation, *protocol.Conversion)
 	protocol.Simulation = transport.NewSimulation(*protocol.Conversion)
-	// Make prototype
+	// Initialize prototypes
+	protocol.initPrototypes(protocolMap)
+	if len(protocol.Prototype) == 0 {
+		slog.Error("Protocol: prototype object is required")
+		return nil
+	}
+	// Initialize devices
+	protocol.initDevices(protocolMap)
+	if len(protocol.Devices) == 0 {
+		slog.Error("Protocol: device object is required")
+		return nil
+	}
+	protocol.RandomGenerator = rand.New(rand.NewSource(time.Now().UnixNano()))
+	return &protocol
+}
+
+func (p *Protocol) initPrototypes(protocolMap map[string]interface{}) {
 	for _, protoData := range protocolMap["prototype"].([]interface{}) {
 		protoMap := protoData.(map[string]interface{})
 		protoType, err := NewPrototype(protoMap)
@@ -114,23 +126,20 @@ func NewProtocol(dataMap map[string]interface{}) *Protocol {
 			slog.Error("Protocol: Failed to create prototype: " + err.Error())
 			continue
 		}
-		protocol.Prototype = append(protocol.Prototype, protoType)
+		p.Prototype = append(p.Prototype, protoType)
 	}
-	if len(protocol.Prototype) == 0 {
-		slog.Error("Protocol: prototype object is required")
-		return nil
-	}
-	// Make devices
+}
+
+func (p *Protocol) initDevices(protocolMap map[string]interface{}) {
 	for _, devData := range protocolMap["device"].([]interface{}) {
 		devMap := devData.(map[string]interface{})
-		protocol.Devices = append(protocol.Devices, NewDevice(devMap))
+		device, err := NewDevice(devMap)
+		if err != nil {
+			slog.Error("Protocol: Failed to create device: " + err.Error())
+			continue
+		}
+		p.Devices = append(p.Devices, device)
 	}
-	if len(protocol.Devices) == 0 {
-		slog.Error("Protocol: device object is required")
-		return nil
-	}
-	protocol.RandomGenerator = rand.New(rand.NewSource(time.Now().UnixNano()))
-	return &protocol
 }
 
 // Log outputs protocol information,
@@ -244,14 +253,12 @@ func (p *Protocol) appendSegmentsToByteArray(msg []byte, segments []*element.Seg
 				}
 				byteCount := bits / 8 * 2
 				// Pad with leading zero if necessary
-				for len(hexadecimal) < int(byteCount) {
-					hexadecimal = "0" + hexadecimal
-				}
+				hexadecimal = strings.Repeat("0", int(byteCount)-len(hexadecimal)) + hexadecimal
 				// Append bytes to message
 				for i := range int(byteCount) / 2 {
-					byte_str := hexadecimal[i*2 : i*2+2]
-					byte_val, _ := strconv.ParseInt(byte_str, 16, 0)
-					msg = append(msg, byte(byte_val))
+					byteStr := hexadecimal[i*2 : i*2+2]
+					byteVal, _ := strconv.ParseInt(byteStr, 16, 0)
+					msg = append(msg, byte(byteVal))
 				}
 			}
 		} else {

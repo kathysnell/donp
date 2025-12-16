@@ -5,6 +5,7 @@ package component
 */
 
 import (
+	"errors"
 	"log/slog"
 	"strconv"
 )
@@ -22,7 +23,7 @@ type Device struct {
 	Messages []*Message
 }
 
-func NewDevice(dataMap map[string]interface{}) *Device {
+func NewDevice(dataMap map[string]interface{}) (*Device, error) {
 	var device Device
 	device.Name = "Unknown"
 	if name, ok := dataMap["name"].(string); ok {
@@ -43,11 +44,10 @@ func NewDevice(dataMap map[string]interface{}) *Device {
 			}
 		}
 	} else {
-		slog.Error("Device: message field is required for device: " + device.Name)
-		return nil
+		return nil, errors.New("Device: message field required for device: " + device.Name)
 	}
 	device.Log()
-	return &device
+	return &device, nil
 }
 
 // Log outputs device information
