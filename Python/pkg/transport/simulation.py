@@ -15,7 +15,7 @@ class Simulation:
         self.logger = logger
         self.conversion = conversion
 
-    def SimulateTransaction(self, tx: bytearray, rx: bytearray):
+    def simulate_transaction(self, tx: bytearray, rx: bytearray):
         """
         Simulates a transmit and receive transaction.
 
@@ -27,12 +27,11 @@ class Simulation:
         Raises:
             None
         """
-        if self.simulateTransmit(tx):
-           if self.simulateReceive(rx):
-               return True
+        if self.simulate_transmit(tx) and self.simulate_receive(rx):
+            return True
         return False
         
-    def simulateTransmit(self, tx: bytearray):
+    def simulate_transmit(self, tx: bytearray):
         """
         Simulates transmitting a message through logging for visibility.
 
@@ -45,14 +44,14 @@ class Simulation:
             
         """
         if tx is None:
-            raise ValueError('Simulation: unable to simulate a null transmit message')
+            raise ValueError("Simulation: unable to simulate a null transmit message")
         if len(tx) == 0:
-            raise ValueError('Simulation: unable to simulate an empty transmit message')
+            raise ValueError("Simulation: unable to simulate an empty transmit message")
         
-        self.logger.info(f'Simulated TX: ' + self.conversion.Display(tx))   
+        self.logger.info("Simulated TX: %s", self.conversion.display(tx))   
         return True
     
-    def simulateReceive(self, rx: bytearray):
+    def simulate_receive(self, rx: bytearray):
         """
         Simulates receiving a message through logging for visibility.
 
@@ -64,11 +63,11 @@ class Simulation:
             ValueError: If the receive message is null or empty.
         """
         if rx is None:
-            raise ValueError('Simulation: unable to simulate a null receive message')
+            raise ValueError("Simulation: unable to simulate a null receive message")
         if len(rx) == 0:
-            raise ValueError('Simulation: unable to simulate an empty receive message')
+            raise ValueError("Simulation: unable to simulate an empty receive message")
         
-        self.logger.info(f'Simulated RX: ' + self.conversion.Display(rx))     
+        self.logger.info("Simulated RX: %s", self.conversion.display(rx))     
         return True
     
         

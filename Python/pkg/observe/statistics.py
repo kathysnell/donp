@@ -13,11 +13,11 @@ class Statistics:
         # Setup logger
         self.logger = logger
         # Initialize statistics fields
-        self.startTime = None
-        self.endTime = None
+        self.begin_time = None
+        self.end_time = None
        
 
-    def StartTime(self):
+    def start_time(self):
         """
         Records the start time for statistics measurement.
 
@@ -28,10 +28,10 @@ class Statistics:
         Raises:
             None
         """
-        self.startTime = time.time()
+        self.begin_time = time.time()
         self.logger.debug("Statistics: Start time recorded")
 
-    def StopTime(self):
+    def stop_time(self):
         """
         Records the end time for statistics measurement.
 
@@ -42,11 +42,11 @@ class Statistics:
         Raises:
             None
         """
-        self.endTime = time.time()
+        self.end_time = time.time()
         self.logger.debug("Statistics: End time recorded")
         
 
-    def getElapsedTime(self):
+    def get_elapsed_time(self):
         """
         Calculates the elapsed time in seconds between start and end times.
 
@@ -57,11 +57,11 @@ class Statistics:
         Raises:
             ValueError: If the timer has not been started and stopped properly.
         """
-        if self.startTime is None or self.endTime is None:
+        if self.begin_time is None or self.end_time is None:
             raise ValueError("Statistics: Timer has not been started and/or stopped properly")
-        return (self.endTime - self.startTime)
+        return (self.end_time - self.begin_time)
 
-    def Log(self):  
+    def log(self):  
         """
         Outputs the statistic information.
 
@@ -72,9 +72,9 @@ class Statistics:
         Raises:
             None
         """
-        self.logger.info(f"Statistics: Elapsed time={self.getElapsedTime()} seconds")
+        self.logger.info(f"Statistics: Elapsed time={self.get_elapsed_time()} seconds")
 
-    def Reset(self):
+    def reset(self):
         """
         Clears the recorded start and end times.
 
@@ -85,6 +85,6 @@ class Statistics:
         Raises:
             None
         """
-        self.startTime = None
-        self.endTime = None
+        self.begin_time = None
+        self.end_time = None
         self.logger.debug("Statistics: Statistics reset")

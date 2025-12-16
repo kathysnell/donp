@@ -36,64 +36,68 @@ class Protocol:
         # Initialize protocol from JSON
         file = None
         # Ensure all required fields are present
-        if not 'protocol' in protocol:
+        if 'protocol' in protocol:
+            try:        
+                file = protocol['protocol']
+            except Exception as e:
+                self.logger.error("an exception has occurred: %s", e)
+            if 'prototype' in file:
+                if 'device' in file:
+                    # Initialize optional protocol fields
+                    prefix = ""
+                    suffix = ""
+                    timeout = 0
+                    source_address = 0
+                    transmission_mode = "hex"
+                    checksum_calculation = "CRC16"
+                    # Populate protocol fields if they exist
+                    if 'prefix' in file:
+                        prefix = file['prefix']
+                    if 'suffix' in file:
+                        suffix = file['suffix']
+                    if 'timeout' in file:
+                        timeout = file['timeout']
+                    if 'source_address' in file:
+                        source_address = file['source_address']
+                    if 'transmission_mode' in file:
+                        transmission_mode = file['transmission_mode']
+                    if 'checksum_calculation' in file:
+                        checksum_calculation = file['checksum_calculation']
+                    # Initialize protocol
+                    self.__initialize(prefix, suffix, timeout, source_address, transmission_mode, checksum_calculation)
+                    self.__init_prototypes(file)
+                    self.__init_devices(file)
+                else:
+                    raise AttributeError("Protocol: device object is required")
+            else:
+                raise AttributeError("Protocol: prototype object is required")
+        else:
             raise AttributeError("Protocol: protocol object is required")
-        try:        
-            file = protocol['protocol']
-        except Exception as e:
-            self.logger.error("an exception has occurred: %s", e)
-        if not 'prototype' in file:
-            raise AttributeError("Protocol: prototype object is required")
-        if not 'device' in file:
-            raise AttributeError("Protocol: device object is required")
-        # Initialize optional protocol fields
-        prefix = ""
-        suffix = ""
-        timeout = 0
-        sourceAddress = 0
-        transmissionMode = "hex"
-        checksumCalculation = "CRC16"
-        # Populate protocol fields if they exist
-        if 'prefix' in file:
-            prefix = file['prefix']
-        if 'suffix' in file:
-            suffix = file['suffix']
-        if 'timeout' in file:
-            timeout = file['timeout']
-        if 'source_address' in file:
-            sourceAddress = file['source_address']
-        if 'transmission_mode' in file:
-            transmissionMode = file['transmission_mode']
-        if 'checksum_calculation' in file:
-            checksumCalculation = file['checksum_calculation']
-        # Initialize protocol
-        self.__initialize(prefix, suffix, timeout, sourceAddress, transmissionMode, checksumCalculation)
-        self.__initPrototype(file)
-        self.__initDevice(file)
 
-    def __initialize(self, prefix: str, suffix: str, timeout: int, sourceAddress: int, transmissionMode: str, checksumCalculation: str):        
+
+    def __initialize(self, prefix: str, suffix: str, timeout: int, source_address: int, transmission_mode: str, checksum_calculation: str):        
         self.prefix = prefix
         self.suffix = suffix
         self.timeout = timeout
-        self.sourceAddress = sourceAddress
-        self.conversion = Conversion(transmissionMode, self.logger)
-        self.checksum = Checksum(checksumCalculation, self.conversion, self.logger)
+        self.source_address = source_address
+        self.conversion = Conversion(transmission_mode, self.logger)
+        self.checksum = Checksum(checksum_calculation, self.conversion, self.logger)
         self.simulation = Simulation(self.conversion, self.logger)
         random.seed(time.time())
 
-    def __initPrototype(self, file: json):
+    def __init_prototypes(self, file: json):
         self.prototype = []
-        self.logger.debug(f'Initializing Prototype: {file["prototype"]}')
+        self.logger.debug(f"Initializing Prototype: {file["prototype"]}")
         for prototype in file['prototype']:
             self.prototype.append(Prototype(prototype, self.logger))
 
-    def __initDevice(self, file: json):
+    def __init_devices(self, file: json):
         self.device = []
-        self.logger.debug(f'Initializing Device: {file["device"]}')
+        self.logger.debug(f"Initializing Device: {file["device"]}")
         for device in file['device']:
             self.device.append(Device(device, self.logger))
 
-    def Log(self):
+    def log(self):
         """
         Outputs protocol information.
 
@@ -104,9 +108,9 @@ class Protocol:
         Raises:
             None
         """
-        self.logger.debug(f'Protocol: Prefix: {self.prefix}, Suffix: {self.suffix}, Timeout: {self.timeout}, SourceAddress {self.sourceAddress}')
+        self.logger.debug(f"Protocol: Prefix: {self.prefix}, Suffix: {self.suffix}, Timeout: {self.timeout}, source_address {self.source_address}")
 
-    def Run(self):
+    def run(self):
         """
         Runs the protocol by setting up messages and performing transactions.
 
@@ -117,17 +121,17 @@ class Protocol:
         Raises:
             None
         """
-        self.logger.debug('Protocol: running')
+        self.logger.debug("Protocol: running")
         # Set messages for transmission - currently assumes client (master) role
-        self.setMessagesFromPrototype(Direction.TX)
+        self.set_messages_from_prototype(Direction.TX)
         # Perform transactions
-        for i in range(10):
+        for _ in range(10):
             for device in self.device:
                 for msg in device.messages:
                     self.transact(msg, device)
                     
 
-    def setMessagesFromPrototype(self, direction: Direction):
+    def set_messages_from_prototype(self, direction: Direction):
         """
         Sets messages for all devices based on prototypes and direction.
 
@@ -140,12 +144,12 @@ class Protocol:
         """
         for device in self.device:
             for msg in device.messages:
-                prototype = self.getPrototype(msg.name)
+                prototype = self.get_prototype(msg.name)
                 if prototype is not None:
-                    msg.SetMessage(self.getMessageFromPrototype(prototype, direction, msg, device))
+                    msg.set_message(self.get_message_from_prototype(prototype, direction, msg, device))
             
     
-    def getMessageFromPrototype(self, prototype: Prototype, direction: Direction, message: Message, device: Device):
+    def get_message_from_prototype(self, prototype: Prototype, direction: Direction, message: Message, device: Device):
         """
         Applies the prototype definition to the device message parameters to construct the message according to the 
         specified direction, then applies conversion according to the configured transmission mode.
@@ -163,17 +167,17 @@ class Protocol:
         """
         msg = bytearray()
         # Get segments based on direction
-        segments = prototype.GetSegments(direction)
+        segments = prototype.get_segments(direction)
         if segments is None:
-            raise ValueError(f'Protocol: unable to find segments for direction: {direction}')
+            raise ValueError(f"Protocol: unable to find segments for direction: {direction}")
         # Prefix
-        msg = self.appendStrToByteArray(msg, self.prefix)
+        msg = self.append_str_to_byte_array(msg, self.prefix)
         # Body
-        self.appendSegmentsToByteArray(msg, segments, message, device)
+        self.append_segments_to_byte_array(msg, segments, message, device)
         # Suffix
-        msg = self.appendStrToByteArray(msg, self.suffix)
+        msg = self.append_str_to_byte_array(msg, self.suffix)
         # Conversion
-        return self.conversion.GetConvertedMessage(msg, self.prefix, self.suffix)
+        return self.conversion.get_converted_message(msg, self.prefix, self.suffix)
     
     # Simulated transaction method
     def transact(self, message: Message, device: Device):
@@ -188,25 +192,25 @@ class Protocol:
         Raises:
             None
         """
-        prototype = self.getPrototype(message.name)
+        prototype = self.get_prototype(message.name)
         if prototype is None:
-            self.logger.error(f'Protocol: unable to find prototype for message: {message.name}')
+            self.logger.error("Protocol: unable to find prototype for message: %s", message.name)
             return False
-        receivedMsg = self.getMessageFromPrototype(prototype, Direction.RX, message, device)
-        if receivedMsg is None:
-            self.logger.error(f'Protocol: no received message for prototype: {prototype.name}')
+        received_msg = self.get_message_from_prototype(prototype, Direction.RX, message, device)
+        if received_msg is None:
+            self.logger.error("Protocol: no received message for prototype: %s", prototype.name)
             return False
-        if self.simulation.SimulateTransaction(message.message, receivedMsg):
-            if self.checksum.ValidateChecksumInMessage(receivedMsg, self.suffix, self.prefix):
+        if self.simulation.simulate_transaction(message.message_byte_array, received_msg):
+            if self.checksum.validate_checksum_in_message(received_msg, self.suffix, self.prefix):
                 return True
             else:
-                self.logger.warning(f'Protocol: message validation failed for message: {message.name}')
+                self.logger.warning("Protocol: message validation failed for message: %s", message.name)
                 return False
-        self.logger.warning(f'Protocol: message transmission failed for message: {message.name}')
+        self.logger.warning("Protocol: message transmission failed for message: %s", message.name)
         return False
         
     # Helper method
-    def getPrototype(self, name: str):
+    def get_prototype(self, name: str):
         """
         Retrieves a prototype by name.
 
@@ -222,7 +226,7 @@ class Protocol:
                 return prototype
         return None
     
-    def appendStrToByteArray(self, msg: bytearray, addition: str):
+    def append_str_to_byte_array(self, msg: bytearray, addition: str):
         """
         Appends a string to the message bytearray.
 
@@ -239,7 +243,7 @@ class Protocol:
                 msg.append(ord(char.upper()))
         return msg        
     
-    def appendSegmentsToByteArray(self, msg: bytearray, segments: list[Segment], message: Message, device: Device):
+    def append_segments_to_byte_array(self, msg: bytearray, segments: list[Segment], message: Message, device: Device):
         """
         Appends a data representation of each segment to the message bytearray.
 
@@ -254,7 +258,7 @@ class Protocol:
             ValueError: If a segment value cannot be found.
         """
         for segment in segments:
-            array, bits = self.getValueArrayWithBits(segment, message, device, msg)
+            array, bits = self.get_value_array_with_bits(segment, message, device, msg)
             if array is not None:
                 for a in array:
                     # Remove '0x' prefix
@@ -262,19 +266,19 @@ class Protocol:
                     # Ensure even number of digits
                     if len(hexadecimal) % 2 != 0:
                         hexadecimal = '0' + hexadecimal
-                    byteCount = bits / 8 * 2
+                    byte_count = bits / 8 * 2
                     # Pad with leading zeros
-                    hexadecimal = hexadecimal.zfill(int(byteCount))
+                    hexadecimal = hexadecimal.zfill(int(byte_count))
                     # Append bytes to message
-                    for i in range(int(byteCount / 2)):                    
+                    for i in range(int(byte_count / 2)):                    
                         byte_str = hexadecimal[i*2:i*2+2]
                         byte_val = int(byte_str, 16)
                         msg.append(byte_val)                
             else:
-                raise ValueError(f'Protocol: unable to find value for segment: {segment.name}')
+                raise ValueError("Protocol: unable to find value for segment: %s", segment.name)
         return msg
 
-    def getValueArrayWithBits(self, segment: Segment, message: Message, device: Device, msg: bytearray):
+    def get_value_array_with_bits(self, segment: Segment, message: Message, device: Device, msg: bytearray):
         """
         Retrieves the value array and bit size for a given segment.
 
@@ -293,13 +297,13 @@ class Protocol:
             array.append(device.address)
             return array, segment.bits
         if segment.name == "error_check":
-            array.append(self.checksum.CalculateChecksum(msg, self.prefix))
+            array.append(self.checksum.calculate_checksum(msg, self.prefix))
             return array, segment.bits
         if segment.name == "byte_count":            
-            array.append(int(message.getDataByteCount()))
+            array.append(int(message.get_data_byte_count()))
             return array, segment.bits
         if segment.name == "data_bytes":            
-            b = segment.bits * int(message.getDataByteCount())
+            b = segment.bits * int(message.get_data_byte_count())
             while b > 0:
                 rand = random.randint(0, 255)
                 array.append(rand)

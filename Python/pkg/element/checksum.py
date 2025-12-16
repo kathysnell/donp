@@ -25,7 +25,7 @@ class Checksum:
         self.logger = logger
 
     # Checksum calculation methods
-    def CalculateChecksum(self, message: bytearray, prefix: str):
+    def calculate_checksum(self, message: bytearray, prefix: str):
         """
         Calls the appropriate checksum calculation method based on the configured calculation type,
         excluding the prefix from the calculation.
@@ -39,13 +39,13 @@ class Checksum:
             None
         """
         if self.calculation.startswith("LRC"):
-            return self.calculateLRC(message[len(prefix):])
+            return self.calculate_lrc(message[len(prefix):])
         if self.calculation.startswith("CRC"):
-            return self.calculateCRC16(message[len(prefix):])
-        self.logger.Warn("Unknown checksum calculation method: " + self.calculation)
+            return self.calculate_crc16(message[len(prefix):])
+        self.logger.warning("Unknown checksum calculation method: %s", self.calculation)
         return 0
     
-    def calculateLRC(self, data: bytearray):
+    def calculate_lrc(self, data: bytearray):
         """
         Computes the Longitudinal Redundancy Check (LRC) for the given message..
 
@@ -62,7 +62,7 @@ class Checksum:
         lrc = ((lrc ^ 0xFF) + 1) & 0xFF
         return lrc
     
-    def calculateCRC16(self, data: bytearray):
+    def calculate_crc16(self, data: bytearray):
         """
         Computes the CRC16 checksum for the given message.
 
@@ -78,14 +78,14 @@ class Checksum:
         for _, b in enumerate(data):
             crc ^= b
             for _ in range(8):
-                if (crc & 0x0001) is not 0:
+                if (crc & 0x0001) != 0:
                     crc = (crc >> 1) ^ polynomial
                 else:
                     crc >>= 1
         # Return little-endian CRC16
         return struct.unpack('<H', struct.pack('>H', crc))[0] & 0xFFFF
     
-    def ValidateChecksumInMessage(self, message: bytearray, suffix: str, prefix: str):
+    def validate_checksum_in_message(self, message: bytearray, suffix: str, prefix: str):
         """
         Validates the checksum of a message.
 
@@ -99,21 +99,21 @@ class Checksum:
             None
         """
         # Checksum is calculated using hexadecimal representation
-        message = self.conversion.GetHexMessage(message, prefix, suffix)
+        message = self.conversion.get_hex_message(message, prefix, suffix)
         # Exclude suffix and checksum from message for validation
         # Note: CalculateChecksum method excludes prefix
-        msg = message[:len(message)-len(suffix)-self.getSizeOfChecksum()]
+        msg = message[:len(message)-len(suffix)-self.get_size_of_checksum()]
         # Received checksum from message
-        recChecksum = self.getChecksumFromByteArray(message, suffix)
+        rec_checksum = self.get_checksum_from_byte_array(message, suffix)
         # Calculated checksum from message       
-        calChecksum = self.CalculateChecksum(msg, prefix)
-        if calChecksum == recChecksum:
-            self.logger.debug(f'checksum valid: {recChecksum:04X}')
+        cal_checksum = self.calculate_checksum(msg, prefix)
+        if cal_checksum == rec_checksum:
+            self.logger.debug(f"checksum valid: {rec_checksum:04X}")
             return True
-        self.logger.warning(f'checksum invalid: {calChecksum:04X} instead of {recChecksum:04X}')
+        self.logger.warning(f"checksum invalid: {cal_checksum:04X} instead of {rec_checksum:04X}")
         return False
     
-    def getChecksumFromByteArray(self, message: bytearray, suffix: str):
+    def get_checksum_from_byte_array(self, message: bytearray, suffix: str):
         """
         Extracts the checksum value from the message bytearray based on the checksum calculation method.
 
@@ -132,7 +132,7 @@ class Checksum:
                 return int(message[len(message)-len(suffix)-2])<<8 | int(message[len(message)-len(suffix)-1])
         return 0
     
-    def getSizeOfChecksum(self):
+    def get_size_of_checksum(self):
         """
         Returns the size of the checksum based on the checksum calculation method.
 

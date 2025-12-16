@@ -27,21 +27,22 @@ class Message:
         # Setup logger
         self.logger = logger
         # Ensure all required fields are present
-        if not 'name' in config:
+        if 'name' in config:
+            # Initialize message fields
+            self.msg_dict = {}
+            self.message_byte_array = None
+            # Create a dictionary representation of the message  
+            for item in config:
+                self.msg_dict[item] = config[item]
+            self.__initialize()
+        else:
             raise AttributeError("Message: name field is required")
-        # Initialize message fields
-        self.msgDict = dict()
-        self.message = None
-        # Create a dictionary representation of the message  
-        for item in config:
-            self.msgDict[item] = config[item]
-        self.__initialize()
     
     def __initialize(self):
-        for key in self.msgDict:
-            setattr(self, key, self.msgDict[key])
+        for key in self.msg_dict:
+            setattr(self, key, self.msg_dict[key])
               
-    def Log(self):
+    def log(self):
         """
         Logs message information.
 
@@ -52,11 +53,11 @@ class Message:
         Raises:
             None
         """
-        self.logger.debug(f'Message Name: {self.name}')
-        for key in self.msgDict:
-            self.logger.debug(f'Message Dictionary Item: {key} Value: {self.msgDict[key]}')
+        self.logger.debug(f"Message Name: {self.name}")
+        for key in self.msg_dict:
+            self.logger.debug(f"Message Dictionary Item: {key} Value: {self.msg_dict[key]}")
 
-    def SetMessage(self, msg: bytearray):
+    def set_message(self, msg: bytearray):
         """
         Sets the message bytearray, which will be used for the duration of the message.
 
@@ -67,10 +68,10 @@ class Message:
         Raises:
             None.
         """
-        if self.message is None and msg is not None:
-            self.message = msg
+        if self.message_byte_array is None and msg is not None:
+            self.message_byte_array = msg
 
-    def getDataByteCount(self):
+    def get_data_byte_count(self):
         """
         Safely calculates the byte count for a given message.
 
@@ -81,27 +82,27 @@ class Message:
         Raises:
             None.
         """
-        length = self.getDataLength()
-        dataType = DataType.INT16.value
-        if self.msgDict.get("data_type") is not None:
-            dataType = self.msgDict["data_type"].lower()
+        length = self.get_data_length()
+        data_type = DataType.INT16.value
+        if self.msg_dict.get("data_type") is not None:
+            data_type = self.msg_dict["data_type"].lower()
         # Match data type
-        if dataType == DataType.INT16.value:
+        if data_type == DataType.INT16.value:
             return length * 2
-        if dataType == DataType.INT32.value:
+        if data_type == DataType.INT32.value:
             return length * 4
-        if dataType == DataType.FLOAT.value:
+        if data_type == DataType.FLOAT.value:
             return length * 4
-        if dataType == DataType.STRING.value:
+        if data_type == DataType.STRING.value:
             return length
-        if dataType == DataType.BIT.value:
+        if data_type == DataType.BIT.value:
             if length % 8 != 0:
                 return (length / 8) + 1
             return (length / 8)
         # Use integer size for default
         return length * 2
     
-    def getDataLength(self):
+    def get_data_length(self):
         """
         Safely determines the data length for a given message.
 
@@ -116,5 +117,4 @@ class Message:
         if self.length is not None:
             length = self.length
         return int(length)
-    
     

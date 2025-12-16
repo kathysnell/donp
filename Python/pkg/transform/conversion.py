@@ -16,7 +16,7 @@ class Conversion:
         self.logger = logger
         self.mode = mode
           
-    def FromHexToAscii(self, message: bytearray, prefix: str, suffix: str):
+    def from_hex_to_ascii(self, message: bytearray, prefix: str, suffix: str):
         """
         Converts a hexadecimal message to its ASCII representation.
 
@@ -34,15 +34,15 @@ class Conversion:
         msg = bytearray()
         length = len(message)
         for index, byte in enumerate(message):
-            byteString = f'{byte:02X}'
-            if self.isAscii(ord(byteString[0])) and self.isAscii(ord(byteString[1])):
-                msg.append(ord(byteString[0]))
-                msg.append(ord(byteString[1]))
-            elif self.isAllowedAscii(byte, prefix, suffix, index, length):
+            byte_string = f'{byte:02X}'
+            if self.is_ascii(ord(byte_string[0])) and self.is_ascii(ord(byte_string[1])):
+                msg.append(ord(byte_string[0]))
+                msg.append(ord(byte_string[1]))
+            elif self.is_allowed_ascii(byte, prefix, suffix, index, length):
                 msg.append(byte)                
         return msg
    
-    def FromAsciiToHex(self, message: bytearray, prefix: str, suffix: str):
+    def from_ascii_to_hex(self, message: bytearray, prefix: str, suffix: str):
         """
         Converts an ASCII message to its hexadecimal representation.
 
@@ -61,20 +61,20 @@ class Conversion:
         length = len(message)
         i = 0
         while i < length:
-            if self.isAscii(message[i]):
+            if self.is_ascii(message[i]):
                 hex_str = chr(message[i]) + chr(message[i+1])
                 byte_val = int(hex_str, 16)
                 msg.append(byte_val)
                 i += 2
-            elif self.isAllowedAscii(message[i], prefix, suffix, i, length):
+            elif self.is_allowed_ascii(message[i], prefix, suffix, i, length):
                 msg.append(message[i])
                 i += 1
             else:
-                raise ValueError(f'Invalid ASCII character in message: {message[i]}')
+                raise ValueError("Invalid ASCII character in message: %02.X", message[i])
         return msg
     
     # Helper Methods
-    def isAscii(self, char: int):
+    def is_ascii(self, char: int):
         """
         Checks if a byte represents a valid ASCII hexadecimal charater (0-9, A-F, a-f).
 
@@ -94,7 +94,7 @@ class Conversion:
             return True
         return False
     
-    def isAllowedAscii(self, char: int, prefix: str, suffix: str, index: int, length: int):
+    def is_allowed_ascii(self, char: int, prefix: str, suffix: str, index: int, length: int):
         """
         Checks if a byte is allowed in the conversion based on prefix or suffix, 
         considering the position in the message.
@@ -110,10 +110,10 @@ class Conversion:
             return True        
         if chr(char) in suffix and index >= length - len(suffix):
             return True
-        self.logger.Warn("Byte " + {char:"02X"} + " is not allowed in conversion at index " + {index})
+        self.logger.warning("Byte: %02.X is not allowed in conversion at index %d", char, index)
         return False
     
-    def Display(self, msg: bytearray):
+    def display(self, msg: bytearray):
         """
         Returns a string representation of the message in hex format for display purposes.
 
@@ -124,14 +124,14 @@ class Conversion:
         Raises:
             None
         """
-        display = msg
+        disp = msg
         if self.mode == Mode.ASCII.value:
-            display = msg.decode('utf-8')
+            disp = msg.decode('utf-8')
         else:
-            display = msg.hex().upper()
-        return display
+            disp = msg.hex().upper()
+        return disp
     
-    def GetHexMessage(self, msg: bytearray, prefix: str, suffix: str):
+    def get_hex_message(self, msg: bytearray, prefix: str, suffix: str):
         """
         Retrieves the message in hexadecimal format.
 
@@ -145,11 +145,11 @@ class Conversion:
             None
         """
         if self.mode == Mode.ASCII.value:
-            return self.FromAsciiToHex(msg, prefix, suffix)
+            return self.from_ascii_to_hex(msg, prefix, suffix)
         else:
             return msg
     
-    def GetConvertedMessage(self, msg: bytearray, prefix: str, suffix: str):
+    def get_converted_message(self, msg: bytearray, prefix: str, suffix: str):
         """
         Retrieves the message based on the conversion mode.
 
@@ -163,6 +163,6 @@ class Conversion:
             None
         """
         if self.mode == Mode.ASCII.value:
-            return self.FromHexToAscii(msg, prefix, suffix)
+            return self.from_hex_to_ascii(msg, prefix, suffix)
         else:
             return msg
