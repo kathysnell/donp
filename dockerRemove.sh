@@ -7,7 +7,7 @@ set -e
 
 # Find docker containers with image name of 'donp' and remove them
 container_ids=$(docker ps -a -q --filter ancestor=donp:latest)
-if [ -n "$container_ids" ]; then
+if [[ -n "$container_ids" ]]; then
     echo "Removing Docker containers with image name 'donp'..."
     docker rm -f $container_ids
     echo "Docker containers removed."

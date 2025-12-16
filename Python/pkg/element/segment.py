@@ -32,7 +32,7 @@ class Segment:
         self.desc = desc
         self.bits = bits
 
-    def Log(self):
+    def log(self):
         """
         Outputs segment information.
 
@@ -43,5 +43,5 @@ class Segment:
         Raises:
             None
         """
-        self.logger.debug(f'Segment: {self.name}, Desc: {self.desc}, Bits: {self.bits}')
+        self.logger.debug(f"Segment: {self.name}, Desc: {self.desc}, Bits: {self.bits}")
     

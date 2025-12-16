@@ -33,39 +33,37 @@ func NewPrototype(dataMap map[string]interface{}) (*Prototype, error) {
 	if desc, ok := dataMap["desc"].(string); ok {
 		prototype.Desc = desc
 	}
+	var err error
 	// Build transmit prototype segments
-	prototype.TxSegments = []*element.Segment{}
-	if txSegments, ok := dataMap["transmit"].([]interface{}); ok {
-		for _, seg := range txSegments {
-			if segMap, ok := seg.(map[string]interface{}); ok {
-				segment, err := element.NewSegment(segMap)
-				if err != nil {
-					slog.Error("Failed to create transmit segment: " + err.Error())
-					continue
-				}
-				prototype.TxSegments = append(prototype.TxSegments, segment)
-			}
-		}
-	} else {
-		return nil, errors.New("Prototype: transmit field is required")
+	prototype.TxSegments, err = prototype.initSegments("transmit", dataMap)
+	if err != nil {
+		return nil, err
 	}
 	// Build receive prototype segments
-	prototype.RxSegments = []*element.Segment{}
-	if rxSegments, ok := dataMap["receive"].([]interface{}); ok {
-		for _, seg := range rxSegments {
+	prototype.RxSegments, err = prototype.initSegments("receive", dataMap)
+	if err != nil {
+		return nil, err
+	}
+	return &prototype, nil
+}
+
+func (p *Prototype) initSegments(name string, dataMap map[string]interface{}) ([]*element.Segment, error) {
+	segments := []*element.Segment{}
+	if segs, ok := dataMap[name].([]interface{}); ok {
+		for _, seg := range segs {
 			if segMap, ok := seg.(map[string]interface{}); ok {
 				segment, err := element.NewSegment(segMap)
 				if err != nil {
-					slog.Error("Failed to create receive segment: " + err.Error())
+					slog.Error("Failed to create " + name + " segment: " + err.Error())
 					continue
 				}
-				prototype.RxSegments = append(prototype.RxSegments, segment)
+				segments = append(segments, segment)
 			}
 		}
 	} else {
-		return nil, errors.New("Prototype: receive field is required")
+		return nil, errors.New("Prototype: " + name + " field is required")
 	}
-	return &prototype, nil
+	return segments, nil
 }
 
 // Log outputs prototype information

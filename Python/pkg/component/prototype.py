@@ -15,29 +15,38 @@ import json
 
 class Prototype:
 
-    def __init__(self, protocol: json, logger):
+    def __init__(self, prototype: json, logger):
         # Setup logger
         self.logger = logger
         # Initialize prototype fields
         self.tx = []
         self.rx = []
         # Ensure all required fields are present
-        if not 'name' in protocol:
+        if 'name' in prototype:
+            # name is present in prototype, continue initialization
+            pass
+        else:
             raise AttributeError("Prototype: name field is required")
-        if not 'transmit' in protocol:
+        if 'transmit' in prototype:
+            # transmit is present in prototype, continue initialization
+            pass
+        else:
             raise AttributeError("Prototype: transmit field is required")
-        if not 'receive' in protocol:
+        if 'receive' in prototype:
+            # receive is present in prototype, continue initialization
+            pass
+        else:
             raise AttributeError("Prototype: receive field is required")
         # Initialize optional prototype fields       
         desc = ""
         # Populate prototype fields if they exist
-        if 'name' in protocol:
-            name = protocol['name']
-        if 'desc' in protocol:
-            desc = protocol['desc']
-        self.__initialize(name, desc, protocol['transmit'], protocol['receive'])
-
-
+        if 'name' in prototype:
+            name = prototype['name']
+        if 'desc' in prototype:
+            desc = prototype['desc']
+        self.__initialize(name, desc, prototype['transmit'], prototype['receive'])
+    
+    
     def __initialize(self, name: str, desc: str, transmit: json, receive: json):
         self.name = name
         self.desc = desc
@@ -48,7 +57,7 @@ class Prototype:
             segment = Segment(seg, self.logger)
             self.rx.append(segment)
 
-    def Log(self):
+    def log(self):
         """
         Logs prototype information.
 
@@ -59,9 +68,9 @@ class Prototype:
         Raises:
             None
         """
-        self.logger.debug("Prototype: " + self.name + " (" + self.desc + ")")
+        self.logger.debug("Prototype: %s (%s)", self.name, self.desc)
 
-    def GetSegments(self, direction: Direction):
+    def get_segments(self, direction: Direction):
         """
         Retrieves segments based on the specified direction.
 
@@ -78,5 +87,4 @@ class Prototype:
             return self.rx
         else:
             raise ValueError(f"Invalid direction specified {direction}")
-    
-    
+   

@@ -28,11 +28,11 @@ class DescObjNotatedProtocolApp:
         self.logger = logging.getLogger(__name__) 
         # Setup statistics
         self.stats = Statistics(self.logger)
-        self.stats.StartTime()
-        self.logger.info('Welcome to the DONP (Descriptive Object Notated Protocol) Application!')
+        self.stats.start_time()
+        self.logger.info("Welcome to the DONP (Descriptive Object Notated Protocol) Application!")
         self.protocol = None
 
-    def Log(self):
+    def log(self):
         """
         Logs (prints) the protocol object details.
 
@@ -44,9 +44,9 @@ class DescObjNotatedProtocolApp:
             None
         """
         if self.protocol is not None:
-            self.protocol.Log()
+            self.protocol.log()
 
-    def initProtocol(self):
+    def init_protocol(self):
         """
         Initializes the protocol by loading the protocol file.
 
@@ -57,7 +57,7 @@ class DescObjNotatedProtocolApp:
         Raises:
             None
         """
-        file = self.openFile()
+        file = self.open_file()
         try:
             if file is None:
                 raise ValueError("DONP App: unable to load protocol file")
@@ -65,7 +65,7 @@ class DescObjNotatedProtocolApp:
         except Exception as e:
             self.logger.error("DONP App: an exception has occurred: %s", e)    
 
-    def openFile(self):
+    def open_file(self):
         """
         Opens and loads the protocol JSON file.
 
@@ -76,20 +76,20 @@ class DescObjNotatedProtocolApp:
         Raises:
             None
         """
-        filePath = "../"
+        file_path = "../"
         match Protocols.ACTIVE:
             case Protocols.MODBUS_ASCII:
-                filePath = filePath + "modbusAscii.json"
+                file_path = file_path + "modbusAscii.json"
             case Protocols.MODBUS_RTU:
-                filePath = filePath + "modbusRtu.json"
+                file_path = file_path + "modbusRtu.json"
         try:
-            with open(filePath, "r", encoding="utf-8") as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 return json.load(f)
         except Exception as e: 
             self.logger.error("DONP App: an exception has occurred: %s", e)
         return None
     
-    def Run(self):
+    def run(self):
         """
         Runs the protocol and reports statistics.
 
@@ -101,9 +101,9 @@ class DescObjNotatedProtocolApp:
             None
         """
         if self.protocol is not None:
-            self.protocol.Run()
-            self.stats.StopTime()
-            self.stats.Log()
+            self.protocol.run()
+            self.stats.stop_time()
+            self.stats.log()
         else:
             self.logger.error("DONP App: Protocol is not initialized, unable to run.")
 
@@ -119,6 +119,6 @@ if __name__ == '__main__':
             None
         """
     app = DescObjNotatedProtocolApp()
-    app.initProtocol()
-    app.Log()
-    app.Run()
+    app.init_protocol()
+    app.log()
+    app.run()

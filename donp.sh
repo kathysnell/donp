@@ -47,9 +47,9 @@ for lang in "${languages[@]}"; do
 
     SECONDS=0  # Reset the timer    
     printf "Running DONP simulation with ${lang_dir} in 10 seconds..."
-    while [ $SECONDS -lt 10 ]; do
+    while [[ $SECONDS -lt 10 ]]; do
         sleep 1
-        if [ $SECONDS -gt 6 ] && [ $SECONDS -lt 10 ]; then
+        if [[ $SECONDS -gt 6 ]] && [[ $SECONDS -lt 10 ]]; then
             printf "\n$((10 - SECONDS)) ..."
         else 
             printf "."     
@@ -89,7 +89,7 @@ for lang in "${languages[@]}"; do
     lang_elapsed_dir_var="${lang}[0]"
     lang_elapsed_dir="${!lang_elapsed_dir_var}"
     
-    if [ -z "$fastest_time" ] || (( $(echo "$lang_elapsed < $fastest_time" | bc -l) )); then
+    if [[ -z "$fastest_time" ]] || (( $(echo "$lang_elapsed < $fastest_time" | bc -l) )); then
         fastest_time="$lang_elapsed"
         fastest_lang="${lang_elapsed_dir}"
     fi
