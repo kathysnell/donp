@@ -2,7 +2,15 @@ FROM ubuntu:noble
 
 WORKDIR /app
 
-COPY . /app
+COPY ./Go /app/Go
+COPY ./Python /app/Python
+COPY ./dockerBuild.sh /app
+COPY ./dockerRemove.sh /app
+COPY ./dockerRun.sh /app
+COPY ./donp.sh /app
+COPY ./modbusAscii.json /app
+COPY ./modbusRtu.json /app
+
 
 RUN apt-get update && \
     apt-get install -y \
