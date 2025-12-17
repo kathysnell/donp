@@ -5,15 +5,15 @@ package component
 */
 
 import (
+	"crypto/rand"
 	"donp/pkg/element"
 	"donp/pkg/transform"
 	"donp/pkg/transport"
 	"fmt"
 	"log/slog"
-	"math/rand"
+	"math/big"
 	"strconv"
 	"strings"
-	"time"
 )
 
 /*
@@ -46,7 +46,6 @@ type Protocol struct {
 	ChecksumCalculation string                `json:"checksum_calculation"`
 	Prototype           []*Prototype          `json:"prototype"`
 	Devices             []*Device             `json:"device"`
-	RandomGenerator     *rand.Rand            `json:"-"`
 	Conversion          *transform.Conversion `json:"-"`
 	Checksum            *element.Checksum     `json:"-"`
 	Simulation          *transport.Simulation `json:"-"`
@@ -114,7 +113,6 @@ func NewProtocol(dataMap map[string]interface{}) *Protocol {
 		slog.Error("Protocol: device object is required")
 		return nil
 	}
-	protocol.RandomGenerator = rand.New(rand.NewSource(time.Now().UnixNano()))
 	return &protocol
 }
 
@@ -286,7 +284,7 @@ func (p *Protocol) getValueArrayWithBits(segment *element.Segment, message *Mess
 	if segment.Name == "data_bytes" {
 		b := int(segment.Bits) * int(message.getDataByteCount())
 		for b > 0 {
-			rand := p.RandomGenerator.Intn(256)
+			rand := p.getSafeRandomByte()
 			array = append(array, rand)
 			b -= 8
 		}
@@ -297,4 +295,13 @@ func (p *Protocol) getValueArrayWithBits(segment *element.Segment, message *Mess
 		return array, uint(segment.Bits)
 	}
 	return nil, 0
+}
+
+// getSafeRandomByte generates a cryptographically secure random byte.
+func (p *Protocol) getSafeRandomByte() int {
+	random, err := rand.Int(rand.Reader, big.NewInt(256))
+	if err != nil {
+		panic(err)
+	}
+	return int(random.Int64())
 }
