@@ -4,7 +4,7 @@
 
 import json
 import logging
-import random
+import secrets
 import time
 from constants import Direction
 from pkg.component.message import Message
@@ -74,7 +74,7 @@ class Protocol:
         self.conversion = Conversion(transmission_mode, self.logger)
         self.checksum = Checksum(checksum_calculation, self.conversion, self.logger)
         self.simulation = Simulation(self.conversion, self.logger)
-        random.seed(time.time())
+    
 
     def __init_prototypes(self, file: json):
         if 'prototype' in file:
@@ -304,7 +304,7 @@ class Protocol:
         if segment.name == "data_bytes":            
             b = segment.bits * int(message.get_data_byte_count())
             while b > 0:
-                rand = random.randint(0, 255)
+                rand = secrets.randbelow(256)
                 array.append(rand)
                 b -= 8
             return array, segment.bits
