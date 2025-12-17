@@ -1,6 +1,10 @@
 ## Version History for DONP (Descriptive Object Notated Protocol) Project
 Log representing the edit history for the DONP project.
 
+#### Version 1.0.2 - Security Enhancement
+- Date: 2025-12-17
+- Safe random byte generation for Python and Go components using cryptographic libraries.
+- Dockerfile selective copy and non-root user execution for improved security.
 #### Version 1.0.1 - Initial Release
 - Date: 2025-12-16
 - Improvements to initial commits
