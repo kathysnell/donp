@@ -1,6 +1,10 @@
 ## Version History for DONP (Descriptive Object Notated Protocol) Project
 Log representing the edit history for the DONP project.
 
+#### Version 1.0.3 - Rust Programming Language Addition
+- Date: 2025-12-30
+- Added Rust programming language implementation for DONP simulation.
+- Improved Dockerfile and bash scripts to include Rust build and run processes.
 #### Version 1.0.2 - Security Enhancement
 - Date: 2025-12-17
 - Safe random byte generation for Python and Go components using cryptographic libraries.
