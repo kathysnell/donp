@@ -23,6 +23,7 @@ echo ""
 echo "The languages to be tested are:"
 echo " - Python"
 echo " - Go"
+echo " - Rust"
 echo ""
 echo "At the end we will see which language was the fastest!"
 echo ""
@@ -30,20 +31,23 @@ echo ""
 # structure indicating directories (programming language specific)
 lang0=("Python" "python3" "donp.py")
 lang1=("Go" "" "./donp")
+lang2=("Rust" "" "./target/release/Rust")
 
-languages=("lang0" "lang1")
+languages=("lang0" "lang1" "lang2")
+
+results=("" "" "")
+
+places=("First" "Second" "Third")
 
 # Loop through each language and execute the corresponding script
 for lang in "${languages[@]}"; do
     lang_dir_var="${lang}[0]"
     lang_cmd_var="${lang}[1]"
     lang_file_var="${lang}[2]"
-    lang_elapsed_var="${lang}[3]"
     
     lang_dir="${!lang_dir_var}"
     lang_cmd="${!lang_cmd_var}"
     lang_file="${!lang_file_var}"
-    lang_elapsed="${!lang_elapsed_var}"
 
     SECONDS=0  # Reset the timer    
     printf "Running DONP simulation with ${lang_dir} in 10 seconds..."
@@ -68,33 +72,29 @@ for lang in "${languages[@]}"; do
     cat output.log
     echo ""
     last_line=$(tail -n 1 output.log)
-    #echo "Last line of output log: ${last_line}"    
+    # Extract elapsed time in seconds    
     seconds=$(echo "${last_line}" | sed -nE 's/.*Elapsed time=([0-9]+(\.[0-9]+)?) seconds.*/\1/p')
+    # Format seconds to 9 decimal places
+    seconds=$(printf "%.9f" "${seconds}")
     echo "Time taken for ${lang_dir}: ${seconds} seconds"
     echo ""
 
-    # Store the elapsed time for this language
-    eval "${lang_elapsed_var}='${seconds}'"
+    # Store lang and elapsed time for summary
+    results+=("${lang_dir}: ${seconds} seconds")
     
     # Return to the original directory
     cd - > /dev/null || exit 1
 done
 
-# Determine the fastest language
-fastest_lang=""
-fastest_time=""
-for lang in "${languages[@]}"; do
-    lang_elapsed_var="${lang}[3]"
-    lang_elapsed="${!lang_elapsed_var}"
-    lang_elapsed_dir_var="${lang}[0]"
-    lang_elapsed_dir="${!lang_elapsed_dir_var}"
-    
-    if [[ -z "$fastest_time" ]] || (( $(echo "$lang_elapsed < $fastest_time" | bc -l) )); then
-        fastest_time="$lang_elapsed"
-        fastest_lang="${lang_elapsed_dir}"
-    fi
+# Sort results to determine the fastest language
+IFS=$'\n' sorted_results=($(sort -t: -k2 -n <<<"${results[*]}"))
+unset IFS
+for i in "${!sorted_results[@]}"; do
+    place="${places[i]}"
+    result="${sorted_results[i]}"
+    lang_name=$(echo "${result}" | cut -d: -f1)
+    lang_time=$(echo "${result}" | cut -d: -f2 | xargs)
+    echo -e "${place} place is \033[1m${lang_name}\033[0m with a time of ${lang_time}!"
 done
-
-echo -e "The fastest language was \033[1m${fastest_lang}\033[0m with a time of ${fastest_time} seconds!"
 
 exit 0

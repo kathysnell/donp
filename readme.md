@@ -2,12 +2,11 @@
 
 Welcome to DONP! Where a protocol simulation is achieved by a protocol described in a JSON file.
 
-Although DONP is in its initial stages, JSON files have been provided for Modbus ASCII and Modbus RTU protocols as examples only. 
+Although DONP is in its initial proof of concept stages, JSON files have been provided for Modbus ASCII and Modbus RTU protocols as examples only. 
 
 Theoretically, any protocol can be described in JSON format and simulated.
 
-The simulation is run inside a Docker container for ease of use and portability and will run on any system that supports Docker. The Docker image is built using a shell script for simplicity. The Docker container runs both a Go application and a Python application that simulate the protocol defined in the JSON file, 
-looping through the message simulation 10 times.
+The DONP simulation is implemented in multiple programming languages and executed via Docker containers. Each language reads the same JSON protocol file and simulates the protocol accordingly, looping through the defined transactions 10 times each run.
 
 For fun, we will compare the execution speed for various programming languages!
 
@@ -16,6 +15,7 @@ For fun, we will compare the execution speed for various programming languages!
 Programming languages included are:
 - Python
 - Go
+- Rust
 
 ## Table of Contents
 - [Installation](#installation)
@@ -63,6 +63,7 @@ By default, the Modbus RTU protocol is active.
 To change the active protocol, modify the `ACTIVE` constant in the following files:
 - `Go/app/donp.go`
 - `Python/donp.py`
+- `Rust/src/main.rs`
 
 
 ### JSON Protocol File Structure
