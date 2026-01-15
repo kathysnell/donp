@@ -46,6 +46,8 @@ mod donp {
                 protocol: component::protocol::Protocol::new(),
                 stats: observe::statistics::Statistics::new(),
             };
+            donp.stats.start();
+            info!("Welcome to the DONP (Descriptive Object Notated Protocol) Application!");
             let result = donp.init_protocol();
             if result.is_err() {
                 donp.stats.end();
@@ -56,8 +58,6 @@ mod donp {
         }
 
         pub fn init_protocol(&mut self) -> Result<(), String> {
-            self.stats.start();
-            info!("Welcome to the DONP (Descriptive Object Notated Protocol) Application!");
             let mut builder = env_logger::Builder::new();
             builder.filter(None, log::LevelFilter::Info);
             builder.format(|buf, record| {

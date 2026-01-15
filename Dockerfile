@@ -19,6 +19,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install necessary packages including language runtimes and build tools
 RUN apt-get update && \
     apt-get install -y \
+    unzip \
+    curl \
     golang \
     python3 \
     python3-pip && \
@@ -29,6 +31,7 @@ RUN apt-get update && \
 WORKDIR /app   
 
 # Selective copy operations
+COPY ./C++ /app/C++
 COPY --from=builder /app/Rust/target/release /app/Rust/target/release
 COPY ./Go /app/Go
 COPY ./Python /app/Python
@@ -40,7 +43,9 @@ COPY ./modbusAscii.json /app
 COPY ./modbusRtu.json /app
 
 # Build remaining applications, file preparation, and permission settings
-RUN cd ../../ && \
+RUN cd /app/C++ && \
+    ./build.sh && \
+    cd ../../ && \
     cd /app/Go && \
     go mod tidy && \
     go build -o donp ./app/donp.go && \
@@ -50,6 +55,10 @@ RUN cd ../../ && \
     chmod g=rx /app/Python/output.log && \
     touch /app/Go/output.log && \
     chmod g=rx /app/Go/output.log && \
+    touch /app/Rust/output.log && \
+    chmod g=rx /app/Rust/output.log && \
+    touch /app/C++/output.log && \
+    chmod g=rx /app/C++/output.log && \
     chown -R donpuser:donpgroup /app
 
 # Switch to non-root user
