@@ -16,11 +16,11 @@ Programming languages included are:
 - Python
 - Go
 - Rust
+- C++
 
 ## Table of Contents
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
 - [License](#license)
 
 
@@ -42,7 +42,6 @@ CD into the project directory:
 cd donp
 ```
 
-
 ### Usage
 To build the Docker image, run:
 ```bash
@@ -58,12 +57,14 @@ To remove all docker containers running the DONP simulation, execute:
 ```
 Note: The Docker image will remain on your system after removing the docker containers.
 
+
 ### Active Protocol
 By default, the Modbus RTU protocol is active.
 To change the active protocol, modify the `ACTIVE` constant in the following files:
 - `Go/app/donp.go`
 - `Python/donp.py`
 - `Rust/src/main.rs`
+- `C++/main.cpp`
 
 
 ### JSON Protocol File Structure

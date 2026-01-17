@@ -24,6 +24,7 @@ echo "The languages to be tested are:"
 echo " - Python"
 echo " - Go"
 echo " - Rust"
+echo " - C++"
 echo ""
 echo "At the end we will see which language was the fastest!"
 echo ""
@@ -32,12 +33,13 @@ echo ""
 lang0=("Python" "python3" "donp.py")
 lang1=("Go" "" "./donp")
 lang2=("Rust" "" "./target/release/Rust")
+lang3=("C++" "" "./donp")
 
-languages=("lang0" "lang1" "lang2")
+languages=("lang0" "lang1" "lang2" "lang3")
 
-results=("" "" "")
+results=("" "" "" "")
 
-places=("First" "Second" "Third")
+places=("First" "Second" "Third" "Fourth")
 
 # Loop through each language and execute the corresponding script
 for lang in "${languages[@]}"; do
